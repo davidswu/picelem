@@ -2,6 +2,7 @@ package main
 
 import (
 	"image"
+	"math/rand"
 	"os"
 	"time"
 
@@ -40,13 +41,20 @@ func run() {
 	angle := 0.0
 
 	last := time.Now()
+	ticker := time.NewTicker(time.Second)
+	color := colornames.Black
 	for !win.Closed() {
 		dt := time.Since(last).Seconds()
 		last = time.Now()
 
 		angle += 0.5 * dt
 
-		win.Clear(colornames.Firebrick)
+		select {
+		case <-ticker.C:
+			color = colornames.Map[colornames.Names[rand.Intn(len(colornames.Names))]]
+		default:
+			win.Clear(color)
+		}
 
 		mat := pixel.IM
 		mat = mat.Rotated(pixel.ZV, angle)
